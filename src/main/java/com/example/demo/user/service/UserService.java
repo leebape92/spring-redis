@@ -1,6 +1,9 @@
 package com.example.demo.user.service;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.redis.RedisService;
@@ -25,7 +28,11 @@ public class UserService {
     // Create / Update
     public User saveUser(User user) {
         User savedUser = userRepository.save(user);
-        redisService.save(userGetKey(savedUser.getId()), savedUser, CACHE_TTL);
+//        redisService.save(userGetKey(savedUser.getId()), savedUser, CACHE_TTL);
+        ValueOperations<String, Object> ops = redisService.opsForValue();
+        ops.set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL, TimeUnit.SECONDS);
+
+        
         System.out.println(redisService.getAllKeys());
         return savedUser;
     }
@@ -35,8 +42,15 @@ public class UserService {
         String key = userGetKey(id);
         System.out.println("key ::: " + key);
         // Redis 먼저 조회
-        Object cached = redisService.get(key);
+//        Object cached = redisService.get(key);
+//        System.out.println("cached ::: " + cached);
+
+        
+        ValueOperations<String, Object> ops = redisService.opsForValue();
+        Object cached = ops.get(userGetKey(id));
+        
         System.out.println("cached ::: " + cached);
+        
         if (cached instanceof User) { // cached 데이터가 User 타입인지 확인
             return (User) cached;
         }

@@ -4,7 +4,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,9 +24,19 @@ public class RedisService {
     	System.out.println("ttlSeconds ::: " + ttlSeconds);
         redisTemplate.opsForValue().set(key, value, ttlSeconds, TimeUnit.SECONDS);
     }
-
+    
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+    
+    // 단건조회
+    public ValueOperations<String, Object> opsForValue() {
+        return redisTemplate.opsForValue();
+    }
+    
+    // 다건조회
+    public ListOperations<String, Object> getListOperations() {
+        return redisTemplate.opsForList();
     }
 
     public void delete(String key) {
