@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +28,43 @@ public class UserService {
         return "user:" + userId;
     }
 
-    // Create / Update
     public User saveUser(User user) {
-        User savedUser = userRepository.save(user);
-//        redisService.save(userGetKey(savedUser.getId()), savedUser, CACHE_TTL);
-        ValueOperations<String, Object> ops = redisService.opsForValue();
-        ops.set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL, TimeUnit.SECONDS);
+        String lockKey = LOCK_PREFIX + user.getId();
+        RLock lock = redissonClient.getLock(lockKey);
+        boolean isLocked = false;
 
-        
-        System.out.println(redisService.getAllKeys());
-        return savedUser;
+        try {
+        	// 다른 스레드가 해당 키에 대한 락을 가지고 있다면 대기상태로 
+            // 3초 동안 다른 스레드가 락을 풀기를 기다림 3초 안에 락을 얻으면 true, 얻지 못하면 false
+        	// 락을 획득하면 Redisson이 자동흐로 5초 후 락을 해제, unlock() 호출 하지 않아도 자동 해제 finally 블록에서 lock.unlock() 해제하는것이 안전
+            isLocked = lock.tryLock(3, 5, TimeUnit.SECONDS);
+            if (isLocked) {
+                // DB 저장
+                User savedUser = userRepository.save(user);
+
+                // 캐시 갱신 (opsForValue 사용 가능) increment, multiGet, setIfAbsent 필요하면 사용
+                // 단순 캐시 저장이라면 save 함수 사용해도 무관
+                ValueOperations<String, Object> ops = redisService.opsForValue();
+                ops.set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL, TimeUnit.SECONDS);
+
+                return savedUser;
+            } else {
+                // 락을 얻지 못한 경우 잠시 대기 후 캐시 재확인 (optional)
+                TimeUnit.MILLISECONDS.sleep(200);
+                Object cached = redisService.get(userGetKey(user.getId()));
+                return cached instanceof User ? (User) cached : null;
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+
+        } finally {
+            // 락 해제 (현재 스레드가 소유한 경우에만)
+            if (isLocked && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
     }
 
     // Read
@@ -92,18 +118,6 @@ public class UserService {
                 lock.unlock();
             }	
 		}
-        
-//        if (cached instanceof User) { // cached 데이터가 User 타입인지 확인
-//            return (User) cached;
-//        }
-//        // Redis 없으면 DB 조회 후 캐시 저장
-//        User user = userRepository.findById(id).orElse(null);
-//        System.out.println("usr ::: " + user);
-//        if (user != null) {
-//            redisService.save(key, user, CACHE_TTL);
-//        }
-//        System.out.println(redisService.getAllKeys());
-//        return user;
     }
 
     // Delete
