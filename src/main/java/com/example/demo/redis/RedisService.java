@@ -15,9 +15,6 @@ public class RedisService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     
-    //
-    public static final String USER_KEY_PREFIX = "user:";
-
     public void save(String key, Object value, long ttlSeconds) {
     	System.out.println("key :::" + key);
     	System.out.println("value :::" + value);
