@@ -2,54 +2,98 @@ package com.example.demo.product.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.product.Product;
-import com.example.demo.repository.ProductRepository;
+import com.example.demo.product.dto.ProductDTO;
+import com.example.demo.product.entity.ProductEntity;
+import com.example.demo.product.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    // 상품 등록
-    public Product createProduct(Product product) {
-        product.setStatus("판매중");
-        product.setCreatedAt(LocalDateTime.now());
+    /**
+     * 상품 등록
+     */
+    public ProductDTO createProduct(ProductDTO dto) {
+        ProductEntity entity = ProductEntity.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .price(dto.getPrice())
+                .stockQuantity(dto.getStockQuantity())
+                .status("판매중")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        ProductEntity saved = productRepository.save(entity);
+        return convertToDTO(saved);
+    }
+
+    /**
+     * 상품 전체 조회
+     */
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 상품 단건 조회
+     */
+    public ProductDTO getProductById(Long id) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. id=" + id));
+        return convertToDTO(product);
+    }
+
+    /**
+     * 상품 수정
+     */
+    public ProductDTO updateProduct(Long id, ProductDTO dto) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. id=" + id));
+
+        product.setName(dto.getName());
+        product.setDescription(dto.getDescription());
+        product.setPrice(dto.getPrice());
+        product.setStockQuantity(dto.getStockQuantity());
+        product.setStatus(dto.getStatus() != null ? dto.getStatus() : product.getStatus());
         product.setUpdatedAt(LocalDateTime.now());
-        return productRepository.save(product);
+
+        ProductEntity updated = productRepository.save(product);
+        return convertToDTO(updated);
     }
 
-    // 상품 전체 조회
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
-
-    // 상품 단건 조회
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-    }
-
-    // 상품 수정
-    public Product updateProduct(Long id, Product updated) {
-        Product product = getProductById(id);
-        product.setName(updated.getName());
-        product.setDescription(updated.getDescription());
-        product.setPrice(updated.getPrice());
-        product.setStockQuantity(updated.getStockQuantity());
-        product.setStatus(updated.getStatus());
-        product.setUpdatedAt(LocalDateTime.now());
-        return productRepository.save(product);
-    }
-
-    // 상품 삭제
+    /**
+     * 상품 삭제
+     */
     public void deleteProduct(Long id) {
-        Product product = getProductById(id);
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. id=" + id));
         productRepository.delete(product);
+    }
+
+    /**
+     * Entity → DTO 변환
+     */
+    private ProductDTO convertToDTO(ProductEntity entity) {
+        return ProductDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
+                .stockQuantity(entity.getStockQuantity())
+                .status(entity.getStatus())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
     }
 }

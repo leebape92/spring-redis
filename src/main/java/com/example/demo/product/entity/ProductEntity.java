@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Data // getter, setter, toString, equals, hashCode 자동 생성
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 필드를 포함하는 생성자
+@Builder
 public class ProductEntity {
 
     @Id
