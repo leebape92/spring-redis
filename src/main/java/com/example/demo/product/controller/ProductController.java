@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.product.dto.ProductDTO;
-import com.example.demo.product.entity.ProductEntity;
 import com.example.demo.product.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,21 +24,29 @@ public class ProductController {
 
     private final ProductService productService;
 
+    // CRUD !!!!
+    
     // 상품 등록
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
-        return ResponseEntity.ok(productService.createProduct(productDTO));
+    	
+    	ProductDTO result = productService.createProduct(productDTO);
+    	
+        return ResponseEntity.ok(result);
     }
 
     // 상품 전체 조회
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<ProductDTO>> getListProduct(@RequestBody ProductDTO productDTO) {
+    	
+    	List<ProductDTO> result = productService.getListProduct(productDTO);
+    	
+        return ResponseEntity.ok(result);
     }
 
     // 상품 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 

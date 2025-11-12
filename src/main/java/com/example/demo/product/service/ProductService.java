@@ -20,29 +20,35 @@ public class ProductService {
     /**
      * 상품 등록
      */
-    public ProductDTO createProduct(ProductDTO dto) {
-        ProductEntity entity = ProductEntity.builder()
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .price(dto.getPrice())
-                .stockQuantity(dto.getStockQuantity())
-                .status("판매중")
+    public ProductDTO createProduct(ProductDTO productDTO) {
+        ProductEntity productEntity = ProductEntity.builder()
+                .name(productDTO.getName())
+                .description(productDTO.getDescription())
+                .price(productDTO.getPrice())
+                .stockQuantity(productDTO.getStockQuantity())
+                .status(productDTO.getStatus())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        ProductEntity saved = productRepository.save(entity);
-        return convertToDTO(saved);
+        ProductEntity saved = productRepository.save(productEntity);
+        return ProductDTO.fromProductDTOEntity(saved);
     }
 
     /**
      * 상품 전체 조회
      */
-    public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
+    public List<ProductDTO> getListProduct(ProductDTO productDTO) {
+        // DB에서 전체 상품 조회
+        List<ProductEntity> ProductEntityList = productRepository.findAll();
+
+        // Entity → DTO 변환
+        List<ProductDTO> ProductDTOList = ProductEntityList.stream()
+                .map(ProductDTO::fromProductDTOEntity) // DTO 내부 정적 메서드 사용
                 .collect(Collectors.toList());
+
+        // 변환된 리스트 반환
+        return ProductDTOList;
     }
 
     /**
