@@ -34,7 +34,7 @@ public class ReservationEntity {
     @Column(nullable = false)
     private LocalDateTime updatedAt; // 예약 수정 시각
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private String status; // 예약 상태 (예: PENDING, CONFIRMED, CANCELED)
 

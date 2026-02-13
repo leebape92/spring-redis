@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.global.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -40,6 +40,7 @@ public class RedisConfig {
         Config config = new Config();
         config.useSingleServer()
               .setAddress("redis://localhost:6379")
+              .setPassword("mypassword")
               .setDatabase(0);
         return Redisson.create(config);
     }
