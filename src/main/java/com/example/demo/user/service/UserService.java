@@ -47,6 +47,9 @@ public class UserService {
                 ValueOperations<String, Object> ops = redisService.opsForValue();
                 ops.set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL, TimeUnit.SECONDS);
 
+                System.out.println("ops :::" + ops);
+                
+                
                 return savedUser;
             } else {
                 // 락을 얻지 못한 경우 잠시 대기 후 캐시 재확인 (optional)
@@ -83,6 +86,7 @@ public class UserService {
         
         // 분산 락 시도
         RLock lock = redissonClient.getLock(lockKey);
+        System.out.println("lock:::" + lock);
         boolean isLocked = false;
         try {
             // 최대 3초 대기, 5초 동안 락 유지(자동해제)

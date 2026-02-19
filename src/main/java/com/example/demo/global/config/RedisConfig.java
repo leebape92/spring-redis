@@ -10,6 +10,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+//Redis는 데이터를 담아두는 서버 그 자체입니다.
+//Redisson은 Java 환경에서 그 서버를 가장 똑똑하고 편하게 쓰기 위한 도구입니다.
+
+// @Configuration : 설정을 위한 클래스 외부 라이브러리 설정이나 복잡한 초기화 로직에 사용
+
+
 @Configuration
 public class RedisConfig {
 
