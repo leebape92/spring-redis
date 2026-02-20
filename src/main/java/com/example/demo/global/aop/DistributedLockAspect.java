@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 // 			 어노테이션이 있어야 스프링이 이 클래스 안에 있는 코드들을 다른 메서드 실행 전/후에 끼워 넣을 준비를 합니다.
 // @Component : 내가 만든 라이브러리
 
+// @DistributedLock가 명시되어있는 메서드가 실행될 때, 실행을 가로채서 앞뒤로 락 로직을 끼워넣음
+
+
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -25,26 +28,34 @@ public class DistributedLockAspect {
 	private final RedisLockManager redisLockManager; // 분리된 매니저 주입
 	
 	
-	// @Around("@annotation(distributedLock)"): "언제 실행할 것인가?"
+	// ProceedingJoinPoint : aop의 핵심 인터페이스 중 하나로 가로챈 메서드의 실행 권한을 쥐고 있음
+	
 	// 대상 메서드의 실행 전과 후 모두를 제어하겠다는 의미입니다.
     @Around("@annotation(distributedLock)")
     public Object lock(ProceedingJoinPoint joinPoint, DistributedLock distributedLock) throws Throwable {
+    	
+    	System.out.println("joinPoint:::" + joinPoint);
+    	System.out.println("distributedLock:::" + distributedLock);
+    	
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        System.out.println("signature:::" + signature);
         
-        // 1. 파서 사용
-        String key = (String) CustomSpringELParser.getDynamicValue(
-                signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
-
+        // 1. CustomSpringELParser을 이용해서 키 생성
+        String key = (String) CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
+        System.out.println("key:::" + key);
+        
+        // 2. RedisLockManager를 통해 락 객체 획득
         RLock rLock = redisLockManager.getLock("LOCK:" + key);
 
         try {
-            // 2. 락 획득 로직
+            // 3. 락 획득 시도
             boolean available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
             if (!available) return false;
 
-            return joinPoint.proceed(); // 비즈니스 로직 실행
+            // 4. 비즈니스 로직 실행
+            return joinPoint.proceed(); 
         } finally {
-            // 3. 매니저를 통한 안전한 해제
+            // 5. 매니저를 통한 안전한 해제
         	redisLockManager.unlock(rLock);
         }
     }

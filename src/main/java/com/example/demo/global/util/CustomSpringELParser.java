@@ -14,6 +14,8 @@ public class CustomSpringELParser {
             context.setVariable(parameterNames[i], args[i]);
         }
 		
+		System.out.println("context :::" + context);
+		
         Object value = parser.parseExpression(key).getValue(context, Object.class);
         
         return value;

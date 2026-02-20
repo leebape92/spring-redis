@@ -14,12 +14,13 @@ import lombok.NoArgsConstructor;
 @Data // getter, setter, toString, equals, hashCode 자동 생성
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 필드를 포함하는 생성자
-public class User implements Serializable {
+public class UserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String email;
     private String name;
     private String age;
     
