@@ -39,6 +39,7 @@ public class DistributedLockAspect {
     	
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         System.out.println("signature:::" + signature);
+        System.out.println("signature.getParameterNames():::" + signature.getParameterNames());
         
         // 1. CustomSpringELParser을 이용해서 키 생성
         String key = (String) CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
@@ -46,6 +47,10 @@ public class DistributedLockAspect {
         
         // 2. RedisLockManager를 통해 락 객체 획득
         RLock rLock = redisLockManager.getLock("LOCK:" + key);
+        System.out.println("락 이름: " + rLock.getName());
+        System.out.println("현재 잠김 여부: " + rLock.isLocked());
+        System.out.println("내 스레드 점유 여부: " + rLock.isHeldByCurrentThread());
+        System.out.println("재진입 횟수: " + rLock.getHoldCount());
 
         try {
             // 3. 락 획득 시도
