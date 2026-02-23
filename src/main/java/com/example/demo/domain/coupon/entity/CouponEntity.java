@@ -9,12 +9,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tb_coupon")
 @Getter
+@Builder // 빌더 패턴 사용 가능하게 함
+@AllArgsConstructor // Builder는 모든 필드를 사용하는 생성자를 필요로 함
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 무분별한 객체 생성 방지
 public class CouponEntity {
 
