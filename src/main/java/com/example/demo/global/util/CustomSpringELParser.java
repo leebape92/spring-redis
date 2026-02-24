@@ -7,6 +7,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+// SpEL(Spring Expression Language)
 public class CustomSpringELParser {
 	public static Object getDynamicValue(String[] parameterNames, Object[] args, String key) {
 		

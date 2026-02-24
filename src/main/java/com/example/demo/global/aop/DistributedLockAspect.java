@@ -27,7 +27,6 @@ public class DistributedLockAspect {
 	
 	private final RedisLockManager redisLockManager; // 분리된 매니저 주입
 	
-	
 	// ProceedingJoinPoint : aop의 핵심 인터페이스 중 하나로 가로챈 메서드의 실행 권한을 쥐고 있음
 	
 	// 대상 메서드의 실행 전과 후 모두를 제어하겠다는 의미입니다.
@@ -39,14 +38,15 @@ public class DistributedLockAspect {
     	
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         System.out.println("signature:::" + signature);
-        System.out.println("signature.getParameterNames():::" + signature.getParameterNames());
         
         // 1. CustomSpringELParser을 이용해서 키 생성
-        String key = (String) CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
+        Object keyBase = CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
+        System.out.println("keyBase:::" + keyBase);
+        String key = distributedLock.keyPrefix() + ":" +String.valueOf(keyBase);
         System.out.println("key:::" + key);
         
         // 2. RedisLockManager를 통해 락 객체 획득
-        RLock rLock = redisLockManager.getLock("LOCK:" + key);
+        RLock rLock = redisLockManager.getLock(key);
         System.out.println("락 이름: " + rLock.getName());
         System.out.println("현재 잠김 여부: " + rLock.isLocked());
         System.out.println("내 스레드 점유 여부: " + rLock.isHeldByCurrentThread());
@@ -54,6 +54,8 @@ public class DistributedLockAspect {
 
         try {
             // 3. 락 획득 시도
+        	
+        	// true:락획득, false:락획득실패
             boolean available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
             if (!available) return false;
 
