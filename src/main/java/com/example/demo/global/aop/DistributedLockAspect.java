@@ -29,7 +29,7 @@ public class DistributedLockAspect {
 	
 	// ProceedingJoinPoint : aop의 핵심 인터페이스 중 하나로 가로챈 메서드의 실행 권한을 쥐고 있음
 	
-	// 대상 메서드의 실행 전과 후 모두를 제어하겠다는 의미입니다.
+	//@DistributedLock 붙은 메서드가 실행될 때 그 동작을 가로채서(Intercept) 로직을 수행하게 됩니다.
     @Around("@annotation(distributedLock)")
     public Object lock(ProceedingJoinPoint joinPoint, DistributedLock distributedLock) throws Throwable {
     	
