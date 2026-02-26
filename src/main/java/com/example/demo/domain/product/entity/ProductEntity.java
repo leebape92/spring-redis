@@ -10,8 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 // 접근 권한: protected는 같은 패키지이거나 상속 관계일 때만 호출할 수 있습니다.
 // @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,10 +22,11 @@ import lombok.NoArgsConstructor;
 
 // JPA는 기본 생성자가 필요하지만 개발자가 빈 객체를 만드는 것은 막아야함
 
-@Table(name = "TB_PRODUCT")
 @Entity
-@Data // getter, setter, toString, equals, hashCode 자동 생성
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA만 쓸 수 있는 "뒷문"
+@Table(name = "TB_PRODUCT")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class ProductEntity {
 
     @Id
@@ -32,16 +35,19 @@ public class ProductEntity {
     private Long id;
 
     @Column(name = "product_name", nullable = false, length = 100)
-    private String name;
+    private String productName;
 
     @Column(length = 255)
     private String description;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private BigDecimal productPrice;
 
-    @Column(name = "stock_quantity", nullable = false)
-    private int stockQuantity;
+    @Column(name = "totalQuantity", nullable = false) //총 수량
+    private Integer totalQuantity;
+    
+    @Column(name = "currentQuantity", nullable = false)
+    private Integer currentQuantity; //현재 수량
 
     @Column(length = 20)
     private String status; // 판매중, 품절 등
@@ -51,16 +57,32 @@ public class ProductEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // === 비즈니스 로직 ===
-    public void decreaseStock(int quantity) {
-        if (this.stockQuantity < quantity) {
-            throw new IllegalStateException("재고가 부족합니다. 현재 재고: " + this.stockQuantity);
-        }
-        this.stockQuantity -= quantity;
+    
+    // 기본 생성자
+    @Builder
+    public ProductEntity(String productName, String description, BigDecimal productPrice, 
+                         int totalQuantity, int currentQuantity, String status) {
+        this.productName = productName;
+        this.description = description;
+        this.productPrice = productPrice;
+        this.totalQuantity = totalQuantity;
+        this.currentQuantity = currentQuantity;
+        this.status = status;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
+    
+    
 
-    public void increaseStock(int quantity) {
-        this.stockQuantity += quantity;
-    }
+//    // === 비즈니스 로직 ===
+//    public void decreaseStock(int quantity) {
+//        if (this.stockQuantity < quantity) {
+//            throw new IllegalStateException("재고가 부족합니다. 현재 재고: " + this.stockQuantity);
+//        }
+//        this.stockQuantity -= quantity;
+//    }
+//
+//    public void increaseStock(int quantity) {
+//        this.stockQuantity += quantity;
+//    }
 }

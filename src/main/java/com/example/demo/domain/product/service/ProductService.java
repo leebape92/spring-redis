@@ -1,40 +1,32 @@
-//package com.example.demo.domain.product.service;
-//
-//import java.time.LocalDateTime;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//import org.springframework.stereotype.Service;
-//
-//import com.example.demo.domain.product.dto.ProductDto;
-//import com.example.demo.domain.product.entity.ProductEntity;
-//import com.example.demo.domain.product.repository.ProductRepository;
-//
-//import lombok.RequiredArgsConstructor;
-//@Service
-//@RequiredArgsConstructor
-//public class ProductService {
-//
-//    private final ProductRepository productRepository;
-//
-//    /**
-//     * 상품 등록
-//     */
-//    public ProductDto createProduct(ProductDto productDTO) {
-//        ProductEntity productEntity = ProductEntity.builder()
-//                .name(productDTO.getName())
-//                .description(productDTO.getDescription())
-//                .price(productDTO.getPrice())
-//                .stockQuantity(productDTO.getStockQuantity())
-//                .status(productDTO.getStatus())
-//                .createdAt(LocalDateTime.now())
-//                .updatedAt(LocalDateTime.now())
-//                .build();
-//
-//        ProductEntity saved = productRepository.save(productEntity);
-//        return ProductDto.fromProductDTOEntity(saved);
-//    }
-//
+package com.example.demo.domain.product.service;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.domain.product.dto.ProductSaveRequestDto;
+import com.example.demo.domain.product.entity.ProductEntity;
+import com.example.demo.domain.product.repository.ProductRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ProductService {
+
+    private final ProductRepository productRepository;
+
+    /**
+     * 상품 등록
+     */
+    @Transactional
+    public void createProduct(ProductSaveRequestDto productSaveRequestDto) {
+    	
+    	ProductEntity couponEntity = productSaveRequestDto.toProductEntity();
+    	
+    	productRepository.save(couponEntity);
+    	
+    }
+
 //    /**
 //     * 상품 전체 조회
 //     */
@@ -102,4 +94,4 @@
 //                .updatedAt(entity.getUpdatedAt())
 //                .build();
 //    }
-//}
+}
