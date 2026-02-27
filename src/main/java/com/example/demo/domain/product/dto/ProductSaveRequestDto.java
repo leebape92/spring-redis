@@ -1,17 +1,20 @@
 package com.example.demo.domain.product.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
-import com.example.demo.domain.coupon.entity.CouponEntity;
 import com.example.demo.domain.product.entity.ProductEntity;
 
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+// @NoArgsConstructor(access = AccessLevel.PROTECTED) : 매개변수가 없는 "기본 생성자"를 만들되, 접근 범위를 protected로 제한
+// -> 같은 패키지에 있거나 상속받은 클래스가 아니라면, 외부(예: 다른 패키지의 컨트롤러나 서비스)에서 new ProductSaveRequestDto()를 호출해 객체를 생성하는 것이 금지됩니다.
+// * 왜 이렇게 설정되어 있나요? (객체 지향적 관점)
+// 보통 DTO나 Entity에서 기본 생성자를 PROTECTED로 막는 이유는 **"불완전한 객체 생성을 방지"**하기 위해서입니다.
+// 데이터가 하나도 없는 빈 객체를 new로 생성해서 사용하는 대신, 전체 필드를 채우는 생성자나 **빌더(Builder)**를 통해서만 값을 넣으며 객체를 만들도록 강제하는 것이죠.
+// 다만, JPA나 Jackson(JSON 변환 라이브러리) 같은 프레임워크는 내부적으로 기본 생성자가 필요하기 때문에 아예 삭제하지는 않고 PROTECTED로 열어두는 것이 관례입니다.
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,12 +38,25 @@ public class ProductSaveRequestDto {
                 .totalQuantity(this.totalQuantity)
                 .currentQuantity(this.currentQuantity)
                 .status(this.status)
-                // createdAt, updatedAt : productEntity에서 관리
+                // createdAt, updatedAt : 기본생성자 builder productEntity에서 관리
                 .build();
+    	
+    	System.out.println("productEntity ::: " + productEntity);
 
         // 변수 반환
         return productEntity;
     }
+    
+    @Builder
+	public ProductSaveRequestDto(String productName, String description, BigDecimal productPrice, Integer totalQuantity,
+			Integer currentQuantity, String status) {
+		this.productName = productName;
+		this.description = description;
+		this.productPrice = productPrice;
+		this.totalQuantity = totalQuantity;
+		this.currentQuantity = currentQuantity;
+		this.status = status;
+	}
 
 
 //    “ProductDTO가 Entity로부터 생성된다”

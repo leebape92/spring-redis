@@ -13,11 +13,15 @@ import com.example.demo.global.util.CustomSpringELParser;
 
 import lombok.RequiredArgsConstructor;
 
+
+
 // @Aspect : 스프링에게 해당 클래스는 비즈니스 로직이 아니라, 여러 도메인(User, Order 등)에 흩어져서 반복 실행될 공통 기능이야"**라고 알려주는 역할입니다.
 // 			 어노테이션이 있어야 스프링이 이 클래스 안에 있는 코드들을 다른 메서드 실행 전/후에 끼워 넣을 준비를 합니다.
 // @Component : 내가 만든 라이브러리
 
 // @DistributedLock가 명시되어있는 메서드가 실행될 때, 실행을 가로채서 앞뒤로 락 로직을 끼워넣음
+
+//DistributedLockAspect / RedisLockManager: 이건 **"도구"**입니다. 유저 락, 상품 락, 주문 락 등 어떤 도메인이든 "락이 필요할 때" 가져다 쓰는 공통 인프라 로직입니다. 
 
 
 @Aspect

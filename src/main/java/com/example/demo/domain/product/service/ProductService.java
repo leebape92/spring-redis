@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.domain.product.dto.ProductSaveRequestDto;
 import com.example.demo.domain.product.entity.ProductEntity;
 import com.example.demo.domain.product.repository.ProductRepository;
+import com.example.demo.domain.stock.service.StockService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,8 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 
     private final ProductRepository productRepository;
-
+    private final StockService stockService;
+    
     /**
      * 상품 등록
      */
@@ -26,6 +28,11 @@ public class ProductService {
     	productRepository.save(couponEntity);
     	
     }
+    
+    /**
+     * 상품 조회
+     */
+
 
 //    /**
 //     * 상품 전체 조회
