@@ -1,26 +1,26 @@
-//package com.example.demo.aop;
+//package com.example.demo.example;
 //
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
 //
-//import com.example.demo.example.OrderService;
-//
 //@SpringBootTest
 //public class OrderTest {
 //	
 //	@Autowired
-//    private OrderService orderService;
+//  private ExampleService exampleService;
 //	
 //	@Test
 //	@DisplayName("AOP 테스트!")
-//    public void order() {
-//        
+//  public void order() {
+//      
 //		// 오더서비스 호출
-//		orderService.order();
+//		exampleService.test();
 //		
-//        System.out.println("끝...");
-//    }
+//      System.out.println("끝...");
+//  }
 //	
 //}
+//
+//

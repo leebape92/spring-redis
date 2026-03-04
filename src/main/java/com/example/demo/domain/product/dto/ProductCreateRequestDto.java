@@ -3,6 +3,7 @@ package com.example.demo.domain.product.dto;
 import java.math.BigDecimal;
 
 import com.example.demo.domain.product.entity.ProductEntity;
+import com.example.demo.domain.stock.entity.StockEntity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,25 +19,33 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductSaveRequestDto {
+public class ProductCreateRequestDto {
 	
     private String productName;
     private String description;
     private BigDecimal productPrice;
-    private Integer totalQuantity;
-    private Integer currentQuantity;
-    private String status;
-
+    private Integer quantity;
+    private Integer status; // 10:판매중, 20:판매완료, 30:상품준비중, 40:판매중지, 50:삭제
     
-    // dto -> entiy 변환
+    
+    @Builder
+	public ProductCreateRequestDto(String productName, String description, 
+			BigDecimal productPrice, Integer quantity, Integer status) {
+		this.productName = productName;
+		this.description = description;
+		this.productPrice = productPrice;
+		this.quantity = quantity;
+		this.status = status;
+	}
+    
+    
+    // 상품 엔티티 변환
     public ProductEntity toProductEntity() {
     	// 빌더 결과를 변수에 할당
     	ProductEntity productEntity = ProductEntity.builder()
                 .productName(this.productName)
                 .description(this.description)
                 .productPrice(this.productPrice)
-                .totalQuantity(this.totalQuantity)
-                .currentQuantity(this.currentQuantity)
                 .status(this.status)
                 // createdAt, updatedAt : 기본생성자 builder productEntity에서 관리
                 .build();
@@ -47,16 +56,16 @@ public class ProductSaveRequestDto {
         return productEntity;
     }
     
-    @Builder
-	public ProductSaveRequestDto(String productName, String description, BigDecimal productPrice, Integer totalQuantity,
-			Integer currentQuantity, String status) {
-		this.productName = productName;
-		this.description = description;
-		this.productPrice = productPrice;
-		this.totalQuantity = totalQuantity;
-		this.currentQuantity = currentQuantity;
-		this.status = status;
-	}
+    // 재고 엔티티 변환
+    public StockEntity toStockEntity(Long productId) {
+    	StockEntity stockEntity = StockEntity.builder()
+                .productId(productId)
+                .quantity(this.quantity)
+                .build();
+		return stockEntity;
+    }
+    
+
 
 
 //    “ProductDTO가 Entity로부터 생성된다”

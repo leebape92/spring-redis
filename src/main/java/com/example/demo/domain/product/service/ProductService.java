@@ -2,10 +2,11 @@ package com.example.demo.domain.product.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.product.dto.ProductSaveRequestDto;
+import com.example.demo.domain.product.dto.ProductCreateRequestDto;
 import com.example.demo.domain.product.entity.ProductEntity;
 import com.example.demo.domain.product.repository.ProductRepository;
-import com.example.demo.domain.stock.service.StockService;
+import com.example.demo.domain.stock.entity.StockEntity;
+import com.example.demo.domain.stock.repository.StockRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,17 +16,21 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final StockService stockService;
+    private final StockRepository stockRepository;
     
     /**
      * 상품 등록
      */
     @Transactional
-    public void createProduct(ProductSaveRequestDto productSaveRequestDto) {
+    public void createProduct(ProductCreateRequestDto productSaveRequestDto) {
     	
-    	ProductEntity couponEntity = productSaveRequestDto.toProductEntity();
+    	// 1. 상품 저장
+    	ProductEntity productEntity = productSaveRequestDto.toProductEntity();
+    	productRepository.save(productEntity);
     	
-    	productRepository.save(couponEntity);
+    	// 2. 재고 저장
+    	StockEntity stockEntity = productSaveRequestDto.toStockEntity(productEntity.getProductId());
+        stockRepository.save(stockEntity);
     	
     }
     

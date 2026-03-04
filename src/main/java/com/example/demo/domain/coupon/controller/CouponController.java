@@ -29,9 +29,9 @@ public class CouponController {
 //    }
     
     @PostMapping("/issue")
-    public ResponseEntity<Void> couponIssue(@RequestBody CouponIssueRequestDto couponIssueRequestDto) {
+    public ResponseEntity<Void> issueCoupon(@RequestBody CouponIssueRequestDto couponIssueRequestDto) {
         // Facade를 호출하여 락과 트랜잭션을 한꺼번에 처리
-        couponIssueFacade.couponIssue(couponIssueRequestDto);
+        couponIssueFacade.issueCoupon(couponIssueRequestDto);
         return ResponseEntity.ok().build();
     }
     

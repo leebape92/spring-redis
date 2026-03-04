@@ -1,55 +1,66 @@
-//package com.example.demo.domain.order.entity;
-//
-//import java.time.LocalDateTime;
-//
-//import com.example.demo.domain.product.entity.ProductEntity;
-//
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.FetchType;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.GenerationType;
-//import jakarta.persistence.Id;
-//import jakarta.persistence.JoinColumn;
-//import jakarta.persistence.ManyToOne;
-//import jakarta.persistence.Table;
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//@Table(name = "TB_ORDER")
-//@Entity
-//@Data // getter, setter, toString, equals, hashCode 자동 생성
-//@NoArgsConstructor // 기본 생성자
-//@AllArgsConstructor // 모든 필드를 포함하는 생성자
-//public class OrderEntity {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "order_id")
-//    private Long id;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "product_id")
-//    private ProductEntity productEntity;
-//
-//    @Column(name = "order_status", nullable = false, length = 20)
-//    private String orderStatus;
-//
-//    @Column(name = "order_date", nullable = false)
-//    private LocalDateTime orderDate;
-//
-//    @Column(name = "reservation_date")
-//    private LocalDateTime reservationDate;
-//
-//    @Column(nullable = false)
-//    private int quantity;
-//
-//    @Column(name = "total_price", nullable = false)
-//    private int totalPrice;
-//
-//    public void cancel() {
-//        this.orderStatus = "CANCELLED";
-//        productEntity.increaseStock(this.quantity); // 재고 복원
-//    }
-//}
+package com.example.demo.domain.order.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "TB_ORDER") // order는 SQL 예약어인 경우가 많아 s를 붙이거나 명시하는 게 안전합니다.
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class OrderEntity {
+
+	// tinyint 와 int
+	// tinyint : 상태값, 코드
+	// int : 수량,가격 
+	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "orderId")
+    private Long orderId;
+
+    @Column(nullable = false)
+    private Long productId;
+
+    @Column(nullable = false, columnDefinition = " INT COMMENT '주문수량'")
+    private Integer quantity;
+
+    @Column(nullable = false)
+    private Long totalPrice;
+
+    @Column(nullable = false, columnDefinition = "TINYINT COMMENT '10:주문, 20:취소, 30:완료'")
+    private Integer status; // 숫자 그대로 저장 (예: 10, 20)
+
+    private LocalDateTime orderTime;
+
+    @Builder
+    private OrderEntity(Long productId, Integer quantity, Long totalPrice, Integer status) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.status = status;
+        this.orderTime = LocalDateTime.now();
+    }
+
+    /**
+     * 주문 생성을 위한 정적 팩토리 메서드
+     */
+    public static OrderEntity createOrder(Long productId, Integer quantity, Long unitPrice, Integer status) {
+        return OrderEntity.builder()
+                .productId(productId)
+                .quantity(quantity)
+                .totalPrice(unitPrice * quantity)
+                .status(status)
+                .build();
+    }
+    
+}

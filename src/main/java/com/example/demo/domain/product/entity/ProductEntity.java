@@ -32,25 +32,19 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private Long id;
+    private Long productId;
 
     @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
 
+    @Column(nullable = false)
+    private BigDecimal productPrice;
+    
     @Column(length = 255)
     private String description;
 
-    @Column(nullable = false)
-    private BigDecimal productPrice;
-
-    @Column(name = "totalQuantity", nullable = false) //총 수량
-    private Integer totalQuantity;
-    
-    @Column(name = "currentQuantity", nullable = false)
-    private Integer currentQuantity; //현재 수량
-
     @Column(length = 20)
-    private String status; // 판매중, 품절 등
+    private Integer status; // 판매중, 품절 등
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -60,13 +54,10 @@ public class ProductEntity {
     
     // 기본 생성자
     @Builder
-    public ProductEntity(String productName, String description, BigDecimal productPrice, 
-                         int totalQuantity, int currentQuantity, String status) {
+    public ProductEntity(String productName, String description, BigDecimal productPrice, Integer status) {
         this.productName = productName;
         this.description = description;
         this.productPrice = productPrice;
-        this.totalQuantity = totalQuantity;
-        this.currentQuantity = currentQuantity;
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

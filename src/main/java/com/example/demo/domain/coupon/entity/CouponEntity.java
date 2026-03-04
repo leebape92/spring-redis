@@ -40,7 +40,7 @@ public class CouponEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coupon_id")
-    private Long id;
+    private Long couponId;
 
     @Column(nullable = false)
     private String couponName; // 쿠폰 이름 (예: 10% 할인 쿠폰)
@@ -74,7 +74,7 @@ public class CouponEntity {
      */
     public void decreaseQuantity() {
         if (this.currentQuantity <= 0) {
-            throw new RuntimeException("남은 쿠폰 수량이 없습니다. (ID: " + this.id + ")");
+            throw new RuntimeException("남은 쿠폰 수량이 없습니다. (ID: " + this.couponId + ")");
         }
         this.currentQuantity -= 1;
     }

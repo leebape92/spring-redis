@@ -1,13 +1,11 @@
 package com.example.demo.domain.user.service;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.user.entity.UserEntity;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.annotation.DistributedLock;
-import com.example.demo.global.config.RedisService;
+import com.example.demo.global.config.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	
 	private final UserRepository userRepository;
-    private final RedisService redisService;
+    private final RedisUtil redisUtil;
     
     private static final long CACHE_TTL = 300; // 5분
     
@@ -42,9 +40,15 @@ public class UserService {
     	
     	// 3. 캐시 갱신 : DB에 저장된 최신 데이터를 레디스 메모리에 복사해두는 역활
     	// key-value저장 ex)set(id값, 저장데이터, 유효시간, CACHE_TTL 초 명시)
-        redisService.opsForValue().set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL, TimeUnit.SECONDS);
+//        redisUtil.set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL, TimeUnit.SECONDS);
+//        
+//        Object cachedData = redisUtil.opsForValue().get(userGetKey(savedUser.getId()));
+//        System.out.println("cachedData:::" + cachedData);
         
-        Object cachedData = redisService.opsForValue().get(userGetKey(savedUser.getId()));
+        redisUtil.set(userGetKey(savedUser.getId()), savedUser, CACHE_TTL);
+
+        Object cachedData = redisUtil.get(userGetKey(savedUser.getId()));
+
         System.out.println("cachedData:::" + cachedData);
         
 		return userEntity;
