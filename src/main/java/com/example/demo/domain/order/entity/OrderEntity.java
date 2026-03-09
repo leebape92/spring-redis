@@ -1,5 +1,6 @@
 package com.example.demo.domain.order.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -35,7 +36,7 @@ public class OrderEntity {
     private Integer quantity;
 
     @Column(nullable = false)
-    private Long totalPrice;
+    private BigDecimal totalPrice;
 
     @Column(nullable = false, columnDefinition = "TINYINT COMMENT '10:주문, 20:취소, 30:완료'")
     private Integer status; // 숫자 그대로 저장 (예: 10, 20)
@@ -43,7 +44,7 @@ public class OrderEntity {
     private LocalDateTime orderTime;
 
     @Builder
-    private OrderEntity(Long productId, Integer quantity, Long totalPrice, Integer status) {
+    private OrderEntity(Long productId, Integer quantity, BigDecimal totalPrice, Integer status) {
         this.productId = productId;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
@@ -54,11 +55,11 @@ public class OrderEntity {
     /**
      * 주문 생성을 위한 정적 팩토리 메서드
      */
-    public static OrderEntity createOrder(Long productId, Integer quantity, Long unitPrice, Integer status) {
+    public static OrderEntity createOrder(Long productId, Integer quantity, BigDecimal totalPrice, Integer status) {
         return OrderEntity.builder()
                 .productId(productId)
                 .quantity(quantity)
-                .totalPrice(unitPrice * quantity)
+                .totalPrice(totalPrice)
                 .status(status)
                 .build();
     }

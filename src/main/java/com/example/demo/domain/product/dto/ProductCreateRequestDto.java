@@ -21,12 +21,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductCreateRequestDto {
 	
+	// 상품관련
     private String productName;
     private String description;
     private BigDecimal productPrice;
-    private Integer quantity;
     private Integer status; // 10:판매중, 20:판매완료, 30:상품준비중, 40:판매중지, 50:삭제
     
+    // 재고관련
+    private Integer quantity;
     
     @Builder
 	public ProductCreateRequestDto(String productName, String description, 
@@ -49,10 +51,6 @@ public class ProductCreateRequestDto {
                 .status(this.status)
                 // createdAt, updatedAt : 기본생성자 builder productEntity에서 관리
                 .build();
-    	
-    	System.out.println("productEntity ::: " + productEntity);
-
-        // 변수 반환
         return productEntity;
     }
     

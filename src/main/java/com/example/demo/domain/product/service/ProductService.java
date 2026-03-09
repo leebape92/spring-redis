@@ -24,6 +24,8 @@ public class ProductService {
     @Transactional
     public void createProduct(ProductCreateRequestDto productSaveRequestDto) {
     	
+    	System.out.println("productSaveRequestDto:::" + productSaveRequestDto);
+    	
     	// 1. 상품 저장
     	ProductEntity productEntity = productSaveRequestDto.toProductEntity();
     	productRepository.save(productEntity);

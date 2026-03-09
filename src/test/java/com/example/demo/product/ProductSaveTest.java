@@ -28,6 +28,7 @@ public class ProductSaveTest {
 			    .description("키보드설명...")
 			    .productPrice(new BigDecimal("10000"))
 			    .status(10)
+			    .quantity(100)
 			    .build(); 
         try {
         	productService.createProduct(productSaveRequestDto);

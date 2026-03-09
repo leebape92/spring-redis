@@ -1,5 +1,7 @@
 package com.example.demo.order;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +21,16 @@ public class OrderSaveTest {
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
 				.productId(1L)
 				.quantity(5)
+				.totalPrice(new BigDecimal("30000"))
+				.status(10)
 				.build();
 		
-		orderCreateFacade.createOrder(orderCreateRequestDto);
+		
+		// 3. 실행 및 검증
+//	    assertDoesNotThrow(() -> {
+	        orderCreateFacade.createOrder(orderCreateRequestDto);
+//	    });
+//		orderCreateFacade.createOrder(orderCreateRequestDto);
 		
 	}
 

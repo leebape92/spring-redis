@@ -33,7 +33,7 @@ public class StockEntity {
     }
 
     // 재고 감소 로직 (DB 반영용)
-    public void decrease(int quantity) {
+    public void decrease(Integer quantity) {
         if (this.quantity < quantity) {
             throw new RuntimeException("재고가 부족합니다.");
         }
