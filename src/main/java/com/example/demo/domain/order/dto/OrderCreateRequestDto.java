@@ -1,8 +1,6 @@
 package com.example.demo.domain.order.dto;
 
-import java.math.BigDecimal;
-
-import com.example.demo.domain.order.entity.OrderEntity;
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,31 +13,13 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderCreateRequestDto {
 
-	private Long productId;
-	private Integer quantity;
-	private BigDecimal totalPrice;
-	private Integer status;
-	
-	
-	@Builder
-	public OrderCreateRequestDto(Long productId, Integer quantity, BigDecimal totalPrice, Integer status) {
-		this.productId = productId;
-		this.quantity = quantity;
-		this.totalPrice = totalPrice;
+	// 여러 상품 정보를 담는 내부 클래스 리스트
+    private List<OrderItemRequestDto> orderItemRequests; 
+    private Integer status;
+    
+    @Builder
+	public OrderCreateRequestDto(List<OrderItemRequestDto> orderItemRequests, Integer status) {
+		this.orderItemRequests = orderItemRequests;
 		this.status = status;
 	}
-	
-
-	// dto -> entity
-	public OrderEntity toOrderEntity() {
-		OrderEntity orderEntity = OrderEntity.builder()
-				.productId(this.productId)
-				.quantity(this.quantity)
-				.status(this.status)
-				.build();
-		return orderEntity;
-	}
-
-
-
 }
