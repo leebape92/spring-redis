@@ -24,11 +24,11 @@
 //		
 //		// Builder 패턴 장점 인자 순서 상관없음, 필요한 것만 넣기 가능!
 //		ProductCreateRequestDto productSaveRequestDto = ProductCreateRequestDto.builder()
-//			    .productName("키보드")
-//			    .description("키보드설명...")
-//			    .productPrice(new BigDecimal("10000"))
+//			    .productName("마우스")
+//			    .description("마우스설명...")
+//			    .productPrice(new BigDecimal("20000"))
 //			    .status(10)
-//			    .quantity(100)
+//			    .quantity(200)
 //			    .build(); 
 //        try {
 //        	productService.createProduct(productSaveRequestDto);

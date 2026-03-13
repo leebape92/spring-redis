@@ -14,7 +14,9 @@ import com.example.demo.domain.stock.repository.StockRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -26,39 +28,14 @@ public class OrderService {
     // 모든 로직을 하나의 @Transactional 메서드에 넣으면, 재고 차감과 주문 저장이 모두 성공하거나 모두 실패하게 됩니다.
     @Transactional
     public void processOrder(OrderCreateRequestDto orderCreateRequestDto) {
-//    	System.out.println("orderCreateRequestDto:::" + orderCreateRequestDto);
-//        // 1. 재고 엔티티 조회 (락이 걸려있으므로 안전함)
-//        StockEntity stockEntity = stockRepository.findByProductId(orderCreateRequestDto.getProductId())
-//                .orElseThrow(() -> new EntityNotFoundException("재고 정보 없음"));
-//
-//        // 2. 재고 차감
-//        // Dirty Checking : @Transactional 메서드가 끝나는 시점에서 기존 DB의 상태 값이 다르면 자동으로 UPDATE
-//        stockEntity.decrease(orderCreateRequestDto.getOrderQuantity());
-//
-//        // 3. OrderItemEntity 생성(주문 상세)
-//        OrderItemEntity orderItemEntity = OrderItemEntity.builder()
-//        		.productId(orderCreateRequestDto.getProductId())
-//        		.orderQuantity(orderCreateRequestDto.getOrderQuantity())
-//        		.orderPrice(orderCreateRequestDto.getOrderPrice())
-//        		.build();
-//        
-//        // 4. OrderEntity 생성(주문 마스터)
-//        OrderEntity orderEntity = OrderEntity.builder()
-//        		.status(10)
-//        		.build();
-//        
-//        // 1:N 관계 맺기 (여기서 OrderEntity의 totalAmount가 다시 계산됨)
-//        orderEntity.addOrderItem(orderItemEntity);
-//        
-//        //5. 주문서 생성
-//        orderRepository.save(orderEntity);
     	
     	// 1. 주문 마스터(OrderEntity) 먼저 생성
         OrderEntity orderEntity = OrderEntity.builder()
-                .status(10)
+                .status(orderCreateRequestDto.getStatus())
                 .build();
         
         for(OrderItemRequestDto orderItemRequestDto : orderCreateRequestDto.getOrderItemRequests()) {
+        	log.info("orderItemRequestDto:::{}",orderItemRequestDto);
         	// (1) 각 상품별 재고 조회 및 차감
             StockEntity stockEntity = stockRepository.findByProductId(orderItemRequestDto.getProductId())
                     .orElseThrow(() -> new EntityNotFoundException("재고 없음: " + orderItemRequestDto.getProductId()));

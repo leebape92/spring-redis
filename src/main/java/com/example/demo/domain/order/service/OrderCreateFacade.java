@@ -17,11 +17,12 @@ public class OrderCreateFacade {
 
     @DistributedLock(
             keyPrefix = "STOCK",
-            key = "#orderCreateRequestDto.productId",
-            waitTime = 5,
-            leaseTime = 3
+            key = "#orderCreateRequestDto.orderItemRequests.![productId]",
+            waitTime = 10,
+            leaseTime = 5
     )
     public void createOrder(OrderCreateRequestDto orderCreateRequestDto) {
+    	log.info("orderCreateRequestDto:::",orderCreateRequestDto);
         // 핵심: 하나의 트랜잭션 안에서 재고 차감과 주문 생성이 모두 일어나야 함
         orderService.processOrder(orderCreateRequestDto);
     }

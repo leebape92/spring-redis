@@ -28,9 +28,9 @@ public class OrderSaveTest {
                 .build();
 
         OrderItemRequestDto item2 = OrderItemRequestDto.builder()
-                .productId(2L)
+                .productId(3L)
                 .orderQuantity(1)
-                .orderPrice(new BigDecimal("50000")) // 단가 5만 원
+                .orderPrice(new BigDecimal("20000")) // 단가 5만 원
                 .build();
 		
 		
@@ -39,7 +39,10 @@ public class OrderSaveTest {
                 .orderItemRequests(List.of(item1, item2)) // 상품 2종류 투입
                 .status(10)
                 .build();
-
+        
+        
+        System.out.println("orderCreateRequestDto :::" + orderCreateRequestDto);
+        
         // [When] 주문 실행
         orderCreateFacade.createOrder(orderCreateRequestDto);
 	}

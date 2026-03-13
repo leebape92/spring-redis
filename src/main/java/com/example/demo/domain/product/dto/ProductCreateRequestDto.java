@@ -40,7 +40,6 @@ public class ProductCreateRequestDto {
 		this.status = status;
 	}
     
-    
     // 상품 엔티티 변환
     public ProductEntity toProductEntity() {
     	// 빌더 결과를 변수에 할당
